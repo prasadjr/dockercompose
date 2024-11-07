@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  nodejs:
+    build: ./backend  # Build Node.js app from the backend directory
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: example
+      MYSQL_DATABASE: mydb
+    ports:
+      - "3000:3000"  # Expose the backend API on port 3000
+    networks:
+      - app-network
+    depends_on:
+      - mysql  # Ensure MySQL is started before Node.js
+
+networks:
+  app-network:
+    driver: bridge
