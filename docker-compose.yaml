@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"  # Expose port 80 of Nginx to port 8080 on the host
+    volumes:
+      - ./html:/usr/share/nginx/html  # Mount the local html folder to Nginx's HTML directory
+    depends_on:
+      - backend   # Ensure that the backend is up before Nginx
+
+  backend:
+    build: ./backend  # Build the Node.js app from the backend folder
+    environment:
+      MYSQL_HOST: db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: example
+      MYSQL_DATABASE: mydb
+    ports:
+      - "3000:3000"  # Expose the backend API on port 3000
+    depends_on:
+      - db  # Make sure the database is up before starting the backend
+
+  db:
+    image: mysql:5.7  # Use MySQL version 5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: example  # Set the MySQL root password
+      MYSQL_DATABASE: mydb          # Create the database `mydb`
+    volumes:
+      - db_data:/var/lib/mysql  # Store database data in a named volume
+
+volumes:
+  db_data:  # Named volume to persist MySQL data
